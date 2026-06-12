@@ -37,11 +37,21 @@ function isGroupCollapsed(key: string) {
   return !!collapsedGroups[key];
 }
 
+function handleSidebarClick(event: MouseEvent) {
+  const target = event.target instanceof Element ? event.target : null;
 
+  if (!target?.closest(".route-link-item")) {
+    return;
+  }
+
+  if (typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches) {
+    appStore.closeSidebar();
+  }
+}
 </script>
 
 <template>
-  <aside class="sidebar" :class="{ open: appStore.sidebarOpen, collapsed: appStore.sidebarCollapsed }">
+  <aside class="sidebar" :class="{ open: appStore.sidebarOpen, collapsed: appStore.sidebarCollapsed }" @click="handleSidebarClick">
     <div class="sidebar-top-actions">
       <RouteLinkItem class="nav-item sidebar-return-tab" :to="{ name: 'hermes.chat' }" :title="t('sidebar.backToChat')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">

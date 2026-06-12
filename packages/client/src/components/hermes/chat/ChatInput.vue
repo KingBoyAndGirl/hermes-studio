@@ -1133,7 +1133,7 @@ function isImage(type: string): boolean {
     text-overflow: ellipsis;
     font-size: 10px;
     line-height: 14px;
-    margin-right: -3px;
+    margin-right: 10px;
   }
 
   .context-bar {
