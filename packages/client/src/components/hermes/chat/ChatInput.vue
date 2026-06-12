@@ -1102,6 +1102,7 @@ function isImage(type: string): boolean {
 .context-bar {
   width: 60px;
   height: 4px;
+  margin-left: -4px;
   background: rgba(128, 128, 128, 0.2);
   border-radius: 2px;
   overflow: hidden;
@@ -1137,6 +1138,7 @@ function isImage(type: string): boolean {
 
   .context-bar {
     width: 42px;
+    margin-left: -3px;
     flex-shrink: 0;
   }
 }
