@@ -219,7 +219,19 @@ defineExpose({
       :title="t('chat.scrollToBottom')"
       @click="handleScrollBottomClick"
     >
-      ↓
+      <svg
+        class="scroll-bottom-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m7 10 5 5 5-5" />
+        <path d="M6 19h12" />
+      </svg>
     </button>
   </div>
 </template>
@@ -284,14 +296,15 @@ defineExpose({
   z-index: 7;
   width: 38px;
   height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 999px;
   border: 1px solid rgba(var(--accent-primary-rgb), 0.24);
   background: rgba(255, 255, 255, 0.94);
   color: var(--accent-primary);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1;
+  padding: 0;
   cursor: pointer;
 
   .dark & {
@@ -301,6 +314,11 @@ defineExpose({
 
 .scroll-bottom-button:hover {
   background: rgba(var(--accent-primary-rgb), 0.1);
+}
+
+.scroll-bottom-icon {
+  width: 19px;
+  height: 19px;
 }
 
 @keyframes spin {
