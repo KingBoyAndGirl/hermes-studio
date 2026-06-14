@@ -174,7 +174,7 @@ export default {
     },
     source: {
       title: '源码安装',
-      cmd1: 'git clone https://github.com/EKKOLearnAI/hermes-web-ui.git',
+      cmd1: 'git clone https://github.com/EKKOLearnAI/hermes-studio.git',
       cmd2: 'cd hermes-web-ui && npm install && npm run dev',
     },
     prereq: '需要 Node.js >= 23',

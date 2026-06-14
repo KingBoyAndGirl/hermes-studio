@@ -20,7 +20,7 @@ async function loadUpdateController(overrides: Partial<UpdateControllerMocks> = 
   const readFileSync = overrides.readFileSync ?? vi.fn(() => JSON.stringify({
     name: 'hermes-web-ui',
     version: '0.0.0',
-    repository: { url: 'https://github.com/EKKOLearnAI/hermes-web-ui.git' },
+    repository: { url: 'https://github.com/EKKOLearnAI/hermes-studio.git' },
   }))
   const appendFileSync = overrides.appendFileSync ?? vi.fn()
 
@@ -268,7 +268,7 @@ describe('update controller', () => {
   })
 
   it('loads preview tags through async git with a short timeout', async () => {
-    process.env.HERMES_WEB_UI_PREVIEW_REPO = 'https://github.com/EKKOLearnAI/hermes-web-ui'
+    process.env.HERMES_WEB_UI_PREVIEW_REPO = 'https://github.com/EKKOLearnAI/hermes-studio'
     const execFile = vi.fn((_command: string, _args: string[], _options: any, callback: any) => {
       callback(null, [
         'abc123\trefs/tags/v0.6.6',
@@ -291,14 +291,14 @@ describe('update controller', () => {
     })
     expect(mocks.execFile).toHaveBeenCalledWith(
       'git',
-      ['ls-remote', '--tags', '--refs', 'https://github.com/EKKOLearnAI/hermes-web-ui.git'],
+      ['ls-remote', '--tags', '--refs', 'https://github.com/EKKOLearnAI/hermes-studio.git'],
       expect.objectContaining({ timeout: 8000 }),
       expect.any(Function),
     )
   })
 
   it('falls back to GitHub API when async git tag loading fails', async () => {
-    process.env.HERMES_WEB_UI_PREVIEW_REPO = 'https://github.com/EKKOLearnAI/hermes-web-ui'
+    process.env.HERMES_WEB_UI_PREVIEW_REPO = 'https://github.com/EKKOLearnAI/hermes-studio'
     const execFile = vi.fn((_command: string, _args: string[], _options: any, callback: any) => {
       callback(new Error('git timeout'), '', '')
     })
@@ -325,7 +325,7 @@ describe('update controller', () => {
       ],
     })
     expect(fetchMock).toHaveBeenCalledWith(
-      'https://api.github.com/repos/EKKOLearnAI/hermes-web-ui/tags?per_page=100',
+      'https://api.github.com/repos/EKKOLearnAI/hermes-studio/tags?per_page=100',
       expect.objectContaining({
         headers: { 'User-Agent': 'hermes-web-ui-preview' },
         signal: expect.any(AbortSignal),
