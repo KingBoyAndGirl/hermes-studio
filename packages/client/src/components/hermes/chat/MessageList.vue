@@ -1340,7 +1340,7 @@ defineExpose({
   display: flex;
   align-items: center;
   gap: 6px;
-  width: 420px;
+  width: 520px;
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
