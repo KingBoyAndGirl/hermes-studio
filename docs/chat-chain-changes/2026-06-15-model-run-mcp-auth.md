@@ -11,9 +11,10 @@ Scoped Claude Code and Codex launches include the bundled Hermes MCP server in
 their generated config, and coding-agent inputs receive the same per-run
 Hermes system prompt plus per-run profile/token prompt before being sent to
 the agent. Claude Code receives the Hermes media/file prompt on every run via
-`--append-system-prompt`. Codex receives the Hermes media/file prompt in each
-run prompt alongside the dynamic profile/token prompt, and Web UI no longer
-writes managed Codex `AGENTS.md` prompt blocks. Managed Claude Code
+`--append-system-prompt`. Codex receives the Hermes media/file prompt and the
+dynamic profile/token prompt through the `developer_instructions` config on
+each run, so the user prompt stays as the user's original input. Web UI no
+longer writes managed Codex `AGENTS.md` prompt blocks. Managed Claude Code
 `CLAUDE.md` blocks preserve existing user content and replace only the marked
 Hermes Web UI prompt block. This keeps media, image, video, file, and
 absolute-path response formatting consistent without storing the injected prompt

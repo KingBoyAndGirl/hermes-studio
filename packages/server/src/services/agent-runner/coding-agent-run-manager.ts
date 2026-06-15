@@ -511,7 +511,7 @@ export class CodingAgentRunManager {
       return { runId: run.id }
     }
     if (run.launch.agentId === 'codex') {
-      this.startCodexExecTurn(run, systemPrompt ? `${systemPrompt}\n\n${text}` : text)
+      this.startCodexExecTurn(run, text, systemPrompt)
       return { runId: run.id }
     }
     if (!run.pty) throw new Error('Coding agent terminal is not available')
@@ -1140,7 +1140,7 @@ export class CodingAgentRunManager {
     })
   }
 
-  private startCodexExecTurn(run: ManagedCodingAgentRun, input: string) {
+  private startCodexExecTurn(run: ManagedCodingAgentRun, input: string, systemPrompt = '') {
     if (childIsRunning(run.currentChild)) {
       throw new Error('Codex is still processing the previous input')
     }
@@ -1170,6 +1170,7 @@ export class CodingAgentRunManager {
     const commonArgs = [
       '--json',
       ...CODEX_REASONING_SUMMARY_ARGS,
+      ...(systemPrompt ? ['-c', `developer_instructions=${JSON.stringify(systemPrompt)}`] : []),
       ...run.launch.args,
       '--skip-git-repo-check',
       '--dangerously-bypass-approvals-and-sandbox',

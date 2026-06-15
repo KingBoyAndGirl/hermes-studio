@@ -135,9 +135,10 @@ describe('coding agent Windows process launch', () => {
     expect(testState.spawnCalls[0].args[3]).toContain('^"exec^"')
     expect(testState.spawnCalls[0].args[3]).toContain('^"-c^"')
     expect(testState.spawnCalls[0].args[3]).toContain('model_reasoning_summary=\\^"auto\\^"')
+    expect(testState.spawnCalls[0].args[3]).toContain('developer_instructions=')
     expect(testState.spawnCalls[0].args[3]).toContain('^"--model^"')
-    expect(testState.spawnCalls[0].args[3]).toContain('^"system^ prompt')
-    expect(testState.spawnCalls[0].args[3]).toContain('test^"')
+    expect(testState.spawnCalls[0].args[3]).toContain('^"test^"')
+    expect(testState.spawnCalls[0].args[3]).not.toContain('system^ prompt\r\n\r\ntest')
     expect(testState.spawnCalls[0].options).toMatchObject({
       stdio: ['ignore', 'pipe', 'pipe'],
       windowsVerbatimArguments: true,
