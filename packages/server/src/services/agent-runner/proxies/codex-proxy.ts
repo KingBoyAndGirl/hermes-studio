@@ -78,6 +78,48 @@ function chatCompletionsUrl(target: CodexProxyTarget): string {
   return resolveChatCompletionsUrl(target.baseUrl)
 }
 
+function summarizeMessages(messages: any[]): any[] {
+  return messages.map((message, index) => ({
+    index,
+    role: message?.role,
+    content_chars: typeof message?.content === 'string'
+      ? message.content.length
+      : message?.content == null
+        ? 0
+        : JSON.stringify(message.content).length,
+    tool_call_id: message?.tool_call_id,
+    tool_calls: Array.isArray(message?.tool_calls)
+      ? message.tool_calls.map((call: any) => ({
+          id: call?.id,
+          type: call?.type,
+          name: call?.function?.name,
+          arguments_chars: typeof call?.function?.arguments === 'string' ? call.function.arguments.length : 0,
+        }))
+      : undefined,
+  }))
+}
+
+function logCodexChatRequest(target: CodexProxyTarget, body: any) {
+  console.log(JSON.stringify({
+    event: 'codex_proxy_chat_request',
+    provider: target.provider,
+    model: target.model,
+    apiMode: target.apiMode,
+    url: chatCompletionsUrl(target),
+    stream: body?.stream === true,
+    messages: summarizeMessages(Array.isArray(body?.messages) ? body.messages : []),
+    tools: Array.isArray(body?.tools)
+      ? body.tools.map((tool: any, index: number) => ({
+          index,
+          type: tool?.type,
+          name: tool?.function?.name,
+          description: tool?.function?.description,
+          parameters: tool?.function?.parameters,
+        }))
+      : [],
+  }, null, 2))
+}
+
 function anthropicMessagesUrl(target: CodexProxyTarget): string {
   return resolveAnthropicMessagesUrl(target.baseUrl)
 }
@@ -88,10 +130,12 @@ async function callOpenAiChat(target: CodexProxyTarget, body: any): Promise<any>
     ;(err as any).status = 501
     throw err
   }
+  const chatBody = responsesToOpenAiChat(body, target)
+  logCodexChatRequest(target, chatBody)
   return agentRunGateway.completeJson({
     url: chatCompletionsUrl(target),
     apiKey: target.apiKey,
-    body: responsesToOpenAiChat(body, target),
+    body: chatBody,
   })
 }
 
@@ -151,10 +195,12 @@ async function openAiChatToResponsesSseStream(target: CodexProxyTarget, body: an
     throw err
   }
 
+  const chatBody = responsesToOpenAiChat(body, target, true)
+  logCodexChatRequest(target, chatBody)
   const stream = await agentRunGateway.streamBytes({
     url: chatCompletionsUrl(target),
     apiKey: target.apiKey,
-    body: responsesToOpenAiChat(body, target, true),
+    body: chatBody,
   })
   return responsesEventStream(observableResponsesEvents(target, openAiChatSseToResponsesEvents(stream, target)))
 }
