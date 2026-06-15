@@ -8,6 +8,9 @@ import {
 import { getOrCreateSession } from './compression'
 import { contentBlocksToString } from './content-blocks'
 import type { ContentBlock, SessionState } from './types'
+import { buildModelRunAuthPrompt } from './model-run-prompt'
+import type { AuthenticatedUser } from '../../../middleware/user-auth'
+import { getSystemPrompt } from '../../../lib/llm-prompt'
 
 export interface CodingAgentRunSocketData {
   input: string | ContentBlock[]
@@ -83,7 +86,15 @@ export async function handleCodingAgentRun(
   state.runId = runId
 
   try {
-    await sendCodingAgentRunInput(sessionId, contentBlocksToString(data.input))
+    const inputText = contentBlocksToString(data.input)
+    const socketUser = socket.data?.user as AuthenticatedUser | undefined
+    const authPrompt = await buildModelRunAuthPrompt(socketUser, profile)
+    const includeBaseSystemPrompt = agentId === 'claude-code' || agentId === 'codex'
+    const runPrompt = [
+      includeBaseSystemPrompt ? getSystemPrompt() : '',
+      ...authPrompt,
+    ].filter(Boolean).join('\n')
+    await sendCodingAgentRunInput(sessionId, inputText, runPrompt)
   } catch (err) {
     if (!codingAgentRunManager.isSessionProcessing(sessionId)) {
       state.isWorking = false

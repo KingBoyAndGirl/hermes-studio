@@ -31,6 +31,8 @@ import type { ChatMessage } from '../../../lib/context-compressor'
 import { resolveBridgeRunModelConfig, type RunModelGroup } from './model-config'
 import { filterBridgeToolCallMarkupDelta, flushPendingToolCallMarkup } from './bridge-delta'
 import { markAbortCompleted } from './abort'
+import { buildModelRunAuthPrompt } from './model-run-prompt'
+import type { AuthenticatedUser } from '../../../middleware/user-auth'
 
 const BRIDGE_USAGE_FLUSH_DELAY_MS = 200
 const BRIDGE_TITLE_EVENT_POLL_INTERVAL_MS = 500
@@ -330,12 +332,14 @@ export async function handleBridgeRun(
     if (resolvedProvider && sessionRow.provider !== resolvedProvider) updates.provider = resolvedProvider
     if (Object.keys(updates).length > 0) updateSession(session_id, updates)
   }
-  const runContext = [
-    `[Current Hermes profile: ${profile}]`,
+  const socketUser = socket.data.user as AuthenticatedUser | undefined
+  const runPrompt = [
+    ...await buildModelRunAuthPrompt(socketUser, profile),
+    socketUser ? '' : `[Current Hermes profile: ${profile}]`,
     workspace ? `[Current working directory: ${workspace}]` : '',
     'When calling Hermes Web UI endpoints from tools or skills, include the current Hermes profile as the X-Hermes-Profile header if the endpoint supports profile-scoped behavior.',
   ].filter(Boolean).join('\n')
-  fullInstructions = `\n${runContext}\n${fullInstructions}`
+  fullInstructions = `\n${runPrompt}\n${fullInstructions}`
 
   const runMarker = `cli_run_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
   const now = Math.floor(Date.now() / 1000)

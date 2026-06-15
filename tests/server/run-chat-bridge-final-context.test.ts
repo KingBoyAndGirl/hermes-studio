@@ -35,6 +35,7 @@ const syncBridgeReasoningToMessageMock = vi.fn()
 const recordBridgeToolStartedMock = vi.fn()
 const recordBridgeToolCompletedMock = vi.fn()
 const resolveBridgeRunModelConfigMock = vi.fn()
+const issueModelRunJwtMock = vi.fn(async () => 'model-run-token')
 
 vi.mock('../../packages/server/src/lib/llm-prompt', () => ({
   getSystemPrompt: getSystemPromptMock,
@@ -87,12 +88,17 @@ vi.mock('../../packages/server/src/services/hermes/run-chat/model-config', () =>
   resolveBridgeRunModelConfig: resolveBridgeRunModelConfigMock,
 }))
 
+vi.mock('../../packages/server/src/middleware/user-auth', () => ({
+  issueModelRunJwt: issueModelRunJwtMock,
+}))
+
 function makeSocket() {
   return {
     connected: true,
     emit: vi.fn(),
     join: vi.fn(),
     to: vi.fn(() => ({ emit: vi.fn() })),
+    data: {},
   } as any
 }
 
@@ -117,6 +123,7 @@ describe('bridge run final context usage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     getSystemPromptMock.mockReturnValue('system prompt')
+    issueModelRunJwtMock.mockResolvedValue('model-run-token')
     getSessionMock.mockReturnValue({ id: 'session-1', profile: 'default', model: '', provider: '' })
     resolveBridgeRunModelConfigMock.mockResolvedValue({ model: 'gpt-test', provider: 'openai' })
     buildCompressedHistoryMock.mockResolvedValue([{ role: 'user', content: 'previous' }])
@@ -194,6 +201,48 @@ describe('bridge run final context usage', () => {
       outputTokens: 7,
       contextTokens: 12345,
     }))
+  })
+
+  it('adds a super admin one hour model run token to bridge instructions for super admin runs', async () => {
+    const emit = vi.fn()
+    const nsp = makeNamespace(emit)
+    const socket = makeSocket()
+    socket.data.user = { id: 1, username: 'admin', role: 'super_admin' }
+    const state = makeState()
+    const sessionMap = new Map([['session-1', state]])
+    const bridge = {
+      chat: vi.fn().mockResolvedValue({ run_id: 'run-1', status: 'started' }),
+      contextEstimate: vi.fn().mockResolvedValue({
+        token_count: 12345,
+        fixed_context_tokens: 12327,
+        message_count: 2,
+        tool_count: 4,
+        system_prompt_chars: 13,
+      }),
+      streamOutput: vi.fn(async function* () {
+        yield { run_id: 'run-1', done: true, status: 'completed', output: 'done' }
+      }),
+    } as any
+
+    const { handleBridgeRun } = await import('../../packages/server/src/services/hermes/run-chat/handle-bridge-run')
+    await handleBridgeRun(
+      nsp,
+      socket,
+      { input: 'hello', session_id: 'session-1' },
+      'default',
+      sessionMap,
+      bridge,
+      false,
+      vi.fn(),
+      vi.fn(),
+    )
+
+    const instructions = bridge.contextEstimate.mock.calls[0][2]
+    expect(issueModelRunJwtMock).toHaveBeenCalledWith({ id: 1, username: 'admin', role: 'super_admin' })
+    expect(instructions).toContain('[Current Hermes Web UI model run token: model-run-token]')
+    expect(instructions).toContain('pass the current Hermes profile as the profile argument')
+    expect(instructions).toContain('token argument')
+    expect(instructions).toContain('expires in 1 hour')
   })
 
   it('creates global-agent bridge sessions with source global_agent', async () => {
