@@ -612,8 +612,19 @@ export const useChatStore = defineStore('chat', () => {
   const isLoadingMessages = ref(false)
   const isRunActive = computed(() => isStreaming.value)
 
-  function runtimeSessionSource(): string | undefined {
-    return runtimeMode.value === 'global_agent' ? 'global_agent' : undefined
+  async function fetchRuntimeSessions(profile?: string | null): Promise<SessionSummary[]> {
+    const scopedProfile = profile || undefined
+    if (runtimeMode.value === 'global_agent') return fetchSessions('global_agent', undefined, scopedProfile)
+
+    const [localSessions, globalSessions] = await Promise.all([
+      fetchSessions(undefined, undefined, scopedProfile),
+      fetchSessions('global_agent', undefined, scopedProfile),
+    ])
+    const byId = new Map<string, SessionSummary>()
+    for (const session of [...localSessions, ...globalSessions]) byId.set(session.id, session)
+    return [...byId.values()].sort((a, b) =>
+      (b.last_active || b.ended_at || b.started_at || 0) - (a.last_active || a.ended_at || a.started_at || 0),
+    )
   }
 
   function runtimeTransport(): ChatRunTransport {
@@ -714,7 +725,7 @@ export const useChatStore = defineStore('chat', () => {
   async function loadSessions(profile?: string | null, preferredSessionId?: string | null) {
     isLoadingSessions.value = true
     try {
-      const list = await fetchSessions(runtimeSessionSource(), undefined, profile || undefined)
+      const list = await fetchRuntimeSessions(profile)
       const fresh = list.map(mapHermesSession)
       // Preserve already-loaded messages for sessions that are still present,
       // so we don't blow away the active session's messages on refresh.
@@ -773,7 +784,7 @@ export const useChatStore = defineStore('chat', () => {
     if (isStreaming.value) return
     if (isLoadingSessions.value) return
     try {
-      const list = await fetchSessions(runtimeSessionSource(), undefined, profile ?? sessionProfileFilter.value ?? undefined)
+      const list = await fetchRuntimeSessions(profile ?? sessionProfileFilter.value)
       const incoming = list.map(mapHermesSession)
       const existingById = new Map(sessions.value.map(s => [s.id, s]))
       const incomingIds = new Set(incoming.map(s => s.id))
@@ -1863,7 +1874,11 @@ export const useChatStore = defineStore('chat', () => {
         : undefined
       const runModelGroups = profileModelGroups?.length ? profileModelGroups : appStore.modelGroups
       const providerGroup = runModelGroups.find(group => group.provider === sessionProvider)
-      const sessionSource: StartRunRequest['source'] = isCodingAgentSession ? 'coding_agent' : 'cli'
+      const sessionSource: StartRunRequest['source'] = activeSession.value?.source === 'global_agent'
+        ? 'global_agent'
+        : isCodingAgentSession
+          ? 'coding_agent'
+          : 'cli'
       const codingAgentId: 'claude-code' | 'codex' =
         activeSession.value?.codingAgentId ||
         (activeSession.value?.agent === 'codex' ? 'codex' : 'claude-code')

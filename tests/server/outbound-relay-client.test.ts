@@ -75,7 +75,7 @@ describe('outbound relay client', () => {
       auth: {
         token: 'relay-token',
         instanceId: 'studio-1',
-        role: 'hermes-web-ui',
+        role: 'hermes-studio',
       },
       transports: ['websocket', 'polling'],
       reconnection: true,

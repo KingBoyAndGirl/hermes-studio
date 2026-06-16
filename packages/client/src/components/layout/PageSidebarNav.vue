@@ -44,11 +44,6 @@ function openGroupChat() {
   void router.push({ name: 'hermes.groupChat' })
 }
 
-function openGlobalAgent() {
-  if (props.active === 'global') return
-  void router.push({ name: 'hermes.globalAgent' })
-}
-
 function openApiRelay() {
   if (typeof window === 'undefined') return
   window.open('https://apikey.fun/register?aff=LIBAPI', '_blank', 'noopener,noreferrer')
@@ -140,7 +135,7 @@ function openApiRelay() {
         <span>{{ t('sidebar.apiRelay') }}</span>
       </button>
     </div>
-    <div v-if="showModeSwitch" class="conversation-switch conversation-switch--three" role="tablist" aria-label="Conversation type">
+    <div v-if="showModeSwitch" class="conversation-switch" role="tablist" aria-label="Conversation type">
       <button
         class="conversation-switch-tab"
         :class="{ active: active === 'chat' || active === 'history' }"
@@ -150,16 +145,6 @@ function openApiRelay() {
         @click="openChat"
       >
         {{ t('sidebar.singleChat') }}
-      </button>
-      <button
-        class="conversation-switch-tab"
-        :class="{ active: active === 'global' }"
-        type="button"
-        role="tab"
-        :aria-selected="active === 'global'"
-        @click="openGlobalAgent"
-      >
-        {{ t('sidebar.globalAgent') }}
       </button>
       <button
         class="conversation-switch-tab"

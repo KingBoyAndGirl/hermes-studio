@@ -77,7 +77,7 @@ describe('chat-run HTTP API controller', () => {
     expect(ctx.body.events).toHaveLength(3)
   })
 
-  it('generates a session id for cli runs when none is provided', async () => {
+  it('generates a session id when none is provided', async () => {
     const socket = makeSocket()
     ioMock.mockReturnValue(socket)
 
@@ -107,6 +107,42 @@ describe('chat-run HTTP API controller', () => {
       profile: 'default',
     })
     expect(ctx.status).toBe(200)
+    expect(ctx.body).toMatchObject({
+      ok: true,
+      status: 'completed',
+      session_id: emittedPayload.session_id,
+    })
+  })
+
+  it('generates a session id for global-agent runs when none is provided', async () => {
+    const socket = makeSocket()
+    ioMock.mockReturnValue(socket)
+
+    const { runOnce } = await import('../../packages/server/src/controllers/chat-run')
+    const ctx = {
+      get: vi.fn((name: string) => name.toLowerCase() === 'authorization' ? 'Bearer token-1' : ''),
+      state: { profile: { name: 'default' } },
+      request: {
+        body: {
+          source: 'global_agent',
+          input: 'start a global run',
+        },
+      },
+      status: 200,
+      body: undefined as any,
+    }
+
+    const pending = runOnce(ctx as any)
+    socket.emitNative('connect')
+    await pending
+
+    const emittedPayload = socket.emit.mock.calls.find(call => call[0] === 'run')?.[1] as Record<string, unknown>
+    expect(emittedPayload.session_id).toEqual(expect.stringMatching(/^[0-9a-f-]{36}$/))
+    expect(emittedPayload).toMatchObject({
+      source: 'global_agent',
+      input: 'start a global run',
+      profile: 'default',
+    })
     expect(ctx.body).toMatchObject({
       ok: true,
       status: 'completed',

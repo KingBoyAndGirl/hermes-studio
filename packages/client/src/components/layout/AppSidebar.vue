@@ -210,17 +210,6 @@ function handleSidebarClick(event: MouseEvent) {
             </svg>
             <span>{{ t("sidebar.codingAgents") }}</span>
           </RouteLinkItem>
-          <RouteLinkItem v-if="hasRoute('hermes.globalAgent')" class="nav-item" :to="{ name: 'hermes.globalAgent' }" :active="selectedKey === 'hermes.globalAgent' || selectedKey === 'hermes.globalAgentSession'">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3v4" />
-              <path d="M12 17v4" />
-              <path d="M3 12h4" />
-              <path d="M17 12h4" />
-              <circle cx="12" cy="12" r="5" />
-              <circle cx="12" cy="12" r="1.5" />
-            </svg>
-            <span>{{ t("sidebar.globalAgent") }}</span>
-          </RouteLinkItem>
           <RouteLinkItem v-if="hasRoute('hermes.versionPreview') && isSuperAdmin && !isVersionPreview" class="nav-item" :to="{ name: 'hermes.versionPreview' }" :active="selectedKey === 'hermes.versionPreview'">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />

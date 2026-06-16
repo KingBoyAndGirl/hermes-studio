@@ -840,7 +840,7 @@ openapi.paths['/api/chat-run/runs'] = {
               },
               session_id: {
                 type: 'string',
-                description: 'Optional session id. For cli/default chat runs, omit this to create a new session automatically. Provide an existing session id to continue that session. Coding-agent runs still require a session id.',
+                description: 'Optional session id. Omit this to create a new session automatically. Provide an existing session id to continue that session.',
               },
               profile: {
                 type: 'string',

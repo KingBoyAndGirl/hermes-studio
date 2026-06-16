@@ -344,7 +344,7 @@ export class OutboundRelayClient {
       auth: {
         token: this.relayToken || undefined,
         instanceId: this.instanceId || undefined,
-        role: 'hermes-web-ui',
+        role: 'hermes-studio',
       },
       transports: ['websocket', 'polling'],
       reconnection: true,

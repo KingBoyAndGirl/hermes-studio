@@ -82,10 +82,9 @@ function generatedSessionId(): string {
   return randomUUID()
 }
 
-function needsGeneratedCliSessionId(payload: Record<string, unknown>): boolean {
-  const source = typeof payload.source === 'string' ? payload.source.trim() : ''
+function needsGeneratedSessionId(payload: Record<string, unknown>): boolean {
   const sessionId = typeof payload.session_id === 'string' ? payload.session_id.trim() : ''
-  return !sessionId && (!source || source === 'cli')
+  return !sessionId
 }
 
 export async function runOnce(ctx: Context) {
@@ -101,7 +100,7 @@ export async function runOnce(ctx: Context) {
   const token = bearerToken(ctx)
   const profile = profileFrom(ctx, body)
   const payload: Record<string, unknown> = { ...userBody(body), profile }
-  if (needsGeneratedCliSessionId(payload)) payload.session_id = generatedSessionId()
+  if (needsGeneratedSessionId(payload)) payload.session_id = generatedSessionId()
 
   ctx.body = await new Promise((resolve) => {
     const events: ChatRunEvent[] = []

@@ -433,6 +433,66 @@
         }
       }
     },
+    "/api/auth/mcu-login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Create mcu-login",
+        "description": "POST /api/auth/mcu-login",
+        "operationId": "microcontrollerLogin",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "account": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "token": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "account",
+                  "id",
+                  "password",
+                  "token",
+                  "url"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/me": {
       "get": {
         "tags": [
@@ -759,7 +819,7 @@
                   },
                   "session_id": {
                     "type": "string",
-                    "description": "Optional session id. For cli/default chat runs, omit this to create a new session automatically. Provide an existing session id to continue that session. Coding-agent runs still require a session id."
+                    "description": "Optional session id. Omit this to create a new session automatically. Provide an existing session id to continue that session."
                   },
                   "profile": {
                     "type": "string",
