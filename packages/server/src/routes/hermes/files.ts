@@ -93,7 +93,7 @@ fileRoutes.get('/api/hermes/files/read', requireSuperAdmin, async (ctx) => {
     const absPath = resolveRequestPath(ctx, relativePath)
     const provider = await createRequestFileProvider(ctx)
     const data = await provider.readFile(absPath)
-    if (data.length > MAX_EDIT_SIZE) {
+    if (MAX_EDIT_SIZE > 0 && data.length > MAX_EDIT_SIZE) {
       ctx.status = 413
       ctx.body = { error: 'File too large to edit', code: 'file_too_large' }
       return
@@ -119,7 +119,7 @@ fileRoutes.put('/api/hermes/files/write', requireSuperAdmin, async (ctx) => {
   }
   try {
     const buf = Buffer.from(content || '', 'utf-8')
-    if (buf.length > MAX_EDIT_SIZE) {
+    if (MAX_EDIT_SIZE > 0 && buf.length > MAX_EDIT_SIZE) {
       ctx.status = 413
       ctx.body = { error: 'Content too large', code: 'file_too_large' }
       return
@@ -266,7 +266,7 @@ fileRoutes.post('/api/hermes/files/upload', requireSuperAdmin, async (ctx) => {
     }
     if (!filename) continue
 
-    if (data.length > MAX_EDIT_SIZE) {
+    if (MAX_EDIT_SIZE > 0 && data.length > MAX_EDIT_SIZE) {
       ctx.status = 413
       ctx.body = { error: `File ${filename} too large`, code: 'file_too_large' }
       return

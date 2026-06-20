@@ -165,7 +165,7 @@ const installingTools = new Set<CodingAgentId>()
 const deletingTools = new Set<CodingAgentId>()
 let cachedGlobalNpmBin: string | null | undefined
 let cachedLoginShellPath: string | null | undefined
-const MAX_CONFIG_FILE_SIZE = parseInt(process.env.MAX_EDIT_SIZE || '', 10) || 10 * 1024 * 1024
+const MAX_CONFIG_FILE_SIZE = (() => { const v = parseInt(process.env.MAX_EDIT_SIZE || '', 10); return Number.isFinite(v) && v >= 0 ? v : 10 * 1024 * 1024 * 1024 })()
 
 function getNodeBinDir() {
   return dirname(process.execPath)
@@ -1368,7 +1368,7 @@ export async function readCodingAgentConfigFile(id: string, key: string, scope: 
       ;(err as any).status = 400
       throw err
     }
-    if (info.size > MAX_CONFIG_FILE_SIZE) {
+    if (MAX_CONFIG_FILE_SIZE > 0 && info.size > MAX_CONFIG_FILE_SIZE) {
       const err = new Error('Config file is too large to edit')
       ;(err as any).status = 413
       throw err
@@ -1404,7 +1404,7 @@ export async function writeCodingAgentConfigFile(id: string, key: string, conten
   const normalizedScope = normalizeConfigScope(scope)
 
   const buffer = Buffer.from(content || '', 'utf-8')
-  if (buffer.length > MAX_CONFIG_FILE_SIZE) {
+  if (MAX_CONFIG_FILE_SIZE > 0 && buffer.length > MAX_CONFIG_FILE_SIZE) {
     const err = new Error('Config file content is too large')
     ;(err as any).status = 413
     throw err

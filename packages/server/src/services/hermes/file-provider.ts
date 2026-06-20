@@ -17,7 +17,7 @@ const MAX_DOWNLOAD_SIZE = parseInt(process.env.MAX_DOWNLOAD_SIZE || '', 10) || 2
 const BACKEND_TIMEOUT = 30_000
 
 // Max edit/upload file size (default 10MB)
-export const MAX_EDIT_SIZE = parseInt(process.env.MAX_EDIT_SIZE || '', 10) || 10 * 1024 * 1024
+export const MAX_EDIT_SIZE = (() => { const v = parseInt(process.env.MAX_EDIT_SIZE || '', 10); return Number.isFinite(v) && v >= 0 ? v : 10 * 1024 * 1024 * 1024 })()
 
 // Sensitive files that should not be written/deleted/renamed
 const SENSITIVE_FILES = new Set(['.env', 'auth.json'])
