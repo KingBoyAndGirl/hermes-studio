@@ -5,7 +5,8 @@ import { getActiveProfileName } from '../services/hermes/hermes-profile'
 import { getProfileUploadDir } from '../services/hermes/upload-paths'
 import { MultipartParseError, parseMultipartBoundary, parseMultipartFilename, splitMultipart } from '../lib/multipart'
 
-const MAX_UPLOAD_SIZE = 50 * 1024 * 1024 // 50MB
+// Max upload file size (0 = unlimited, default)
+const MAX_UPLOAD_SIZE = parseInt(process.env.MAX_UPLOAD_SIZE || '0', 10)
 
 function requestedProfile(ctx: any): string {
   return ctx.state?.profile?.name || getActiveProfileName() || 'default'
@@ -24,7 +25,7 @@ export async function handleUpload(ctx: any) {
   let totalSize = 0
   for await (const chunk of ctx.req) {
     totalSize += chunk.length
-    if (totalSize > MAX_UPLOAD_SIZE) {
+    if (MAX_UPLOAD_SIZE > 0 && totalSize > MAX_UPLOAD_SIZE) {
       ctx.status = 413; ctx.body = { error: `File too large (max ${MAX_UPLOAD_SIZE / 1024 / 1024}MB)` }; return
     }
     chunks.push(chunk)
