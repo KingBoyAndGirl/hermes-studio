@@ -77,7 +77,7 @@ describe('Hermes Studio CLI shim', () => {
   })
 
   it('sets the desktop MCP URL from HERMES_DESKTOP_PORT when present', () => {
-    const content = createMcpShimContent('/runtime/node', '/resources/webui/bin/hermes-web-ui-mcp.mjs', 'http://127.0.0.1:8748', 'darwin')
+    const content = createMcpShimContent('/runtime/node', '/resources/webui/bin/hermes-studio-mcp.mjs', 'http://127.0.0.1:8748', 'darwin')
 
     expect(content).toContain('if [ -n "${HERMES_DESKTOP_PORT:-}" ]; then')
     expect(content).toContain('HERMES_WEB_UI_URL="http://127.0.0.1:${HERMES_DESKTOP_PORT}"')
@@ -88,7 +88,7 @@ describe('Hermes Studio CLI shim', () => {
   })
 
   it('sets the desktop MCP URL from HERMES_DESKTOP_PORT in Windows shims', () => {
-    const content = createMcpShimContent('C:\\runtime\\node.exe', 'C:\\resources\\webui\\bin\\hermes-web-ui-mcp.mjs', 'http://127.0.0.1:8748', 'win32')
+    const content = createMcpShimContent('C:\\runtime\\node.exe', 'C:\\resources\\webui\\bin\\hermes-studio-mcp.mjs', 'http://127.0.0.1:8748', 'win32')
 
     expect(content).toContain('if "%HERMES_DESKTOP_PORT%"=="" (')
     expect(content).toContain('set "HERMES_WEB_UI_URL=http://127.0.0.1:8748"')

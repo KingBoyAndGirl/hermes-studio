@@ -130,7 +130,7 @@ describe('hermes-web-ui MCP server', () => {
     if (!address || typeof address === 'string') throw new Error('expected TCP server address')
 
     const responses = new Map<number, any>()
-    child = spawn(process.execPath, ['bin/hermes-web-ui-mcp.mjs'], {
+    child = spawn(process.execPath, ['bin/hermes-studio-mcp.mjs'], {
       cwd: process.cwd(),
       env: {
         ...process.env,
@@ -292,8 +292,11 @@ describe('hermes-web-ui MCP server', () => {
     await new Promise<void>(resolve => server.close(() => resolve()))
   })
 
-  it('reports the package version from the CLI', async () => {
-    const child = spawn(process.execPath, ['bin/hermes-web-ui-mcp.mjs', '--version'], {
+  it.each([
+    'bin/hermes-studio-mcp.mjs',
+    'bin/hermes-web-ui-mcp.mjs',
+  ])('reports the package version from the CLI entry %s', async (entry) => {
+    const child = spawn(process.execPath, [entry, '--version'], {
       cwd: process.cwd(),
       env: process.env,
     })
@@ -371,7 +374,7 @@ describe('hermes-web-ui MCP server', () => {
     if (!address || typeof address === 'string') throw new Error('expected TCP server address')
 
     const responses = new Map<number, any>()
-    child = spawn(process.execPath, ['bin/hermes-web-ui-mcp.mjs', 'use'], {
+    child = spawn(process.execPath, ['bin/hermes-studio-mcp.mjs', 'use'], {
       cwd: process.cwd(),
       env: {
         ...process.env,
@@ -497,7 +500,7 @@ describe('hermes-web-ui MCP server', () => {
     if (!address || typeof address === 'string') throw new Error('expected TCP server address')
 
     const responses = new Map<number, any>()
-    child = spawn(process.execPath, ['bin/hermes-web-ui-mcp.mjs', 'devices'], {
+    child = spawn(process.execPath, ['bin/hermes-studio-mcp.mjs', 'devices'], {
       cwd: process.cwd(),
       env: {
         ...process.env,

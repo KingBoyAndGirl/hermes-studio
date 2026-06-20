@@ -217,7 +217,7 @@ describe('coding agent launch preparation', () => {
     const mcp = JSON.parse(readFileSync(join(result.rootDir, 'mcp.json'), 'utf-8'))
     expect(mcp.mcpServers['hermes-studio-api']).toMatchObject({
       command: process.execPath,
-      args: [join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'api'],
+      args: [join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'api'],
       env: {
         HERMES_WEB_UI_URL: 'http://127.0.0.1:8648',
         HERMES_WEB_UI_HOME: home,
@@ -230,7 +230,7 @@ describe('coding agent launch preparation', () => {
     })
     expect(mcp.mcpServers['hermes-studio-devices']).toMatchObject({
       command: process.execPath,
-      args: [join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'devices'],
+      args: [join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'devices'],
       env: {
         HERMES_MCP_SERVER_NAME: 'hermes-studio-devices',
         HERMES_MCP_TOOLSET: 'devices',
@@ -238,7 +238,7 @@ describe('coding agent launch preparation', () => {
     })
     expect(mcp.mcpServers['hermes-studio-use']).toMatchObject({
       command: process.execPath,
-      args: [join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'use'],
+      args: [join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'use'],
       env: {
         HERMES_MCP_SERVER_NAME: 'hermes-studio-use',
         HERMES_MCP_TOOLSET: 'use',
@@ -417,9 +417,9 @@ describe('coding agent launch preparation', () => {
     expect(config).toContain('[mcp_servers.hermes-studio-devices]')
     expect(config).toContain('[mcp_servers.hermes-studio-use]')
     expect(config).toContain(`command = "${process.execPath}"`)
-    expect(config).toContain(`args = ["${join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs')}", "api"]`)
-    expect(config).toContain(`args = ["${join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs')}", "devices"]`)
-    expect(config).toContain(`args = ["${join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs')}", "use"]`)
+    expect(config).toContain(`args = ["${join(process.cwd(), 'bin/hermes-studio-mcp.mjs')}", "api"]`)
+    expect(config).toContain(`args = ["${join(process.cwd(), 'bin/hermes-studio-mcp.mjs')}", "devices"]`)
+    expect(config).toContain(`args = ["${join(process.cwd(), 'bin/hermes-studio-mcp.mjs')}", "use"]`)
     expect(config).toContain(`env = { HERMES_WEB_UI_URL = "http://127.0.0.1:8648", HERMES_WEB_UI_HOME = "${home}"`)
     expect(config).toContain('HERMES_WEBUI_STATE_DIR = "')
     expect(config).toContain('HERMES_WEB_UI_PROFILE = "default"')

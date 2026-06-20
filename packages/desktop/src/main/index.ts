@@ -591,7 +591,7 @@ function runDesktopApp() {
       })
       installHermesStudioMcpShim({
         nodePath: bundledNode(),
-        scriptPath: join(webuiDir(), 'bin', 'hermes-web-ui-mcp.mjs'),
+        scriptPath: join(webuiDir(), 'bin', 'hermes-studio-mcp.mjs'),
         webUiUrl: `http://127.0.0.1:${PORT}`,
       }).then(result => {
         if (result.status === 'skipped') {

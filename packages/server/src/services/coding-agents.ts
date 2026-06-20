@@ -766,6 +766,9 @@ function isDesktopRuntime(): boolean {
 function candidateBundledMcpScripts(): string[] {
   return [
     process.env.HERMES_WEB_UI_MCP_BIN,
+    join(process.cwd(), 'bin/hermes-studio-mcp.mjs'),
+    join(__dirname, '../../bin/hermes-studio-mcp.mjs'),
+    join(__dirname, '../../../../../bin/hermes-studio-mcp.mjs'),
     join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'),
     join(__dirname, '../../bin/hermes-web-ui-mcp.mjs'),
     join(__dirname, '../../../../../bin/hermes-web-ui-mcp.mjs'),

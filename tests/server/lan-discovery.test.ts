@@ -194,7 +194,7 @@ describe('LAN discovery', () => {
   })
 
   it('exposes an MCP terminal list tool so agents can recover forgotten terminal ids', () => {
-    const mcpSource = readFileSync('bin/hermes-web-ui-mcp.mjs', 'utf8')
+    const mcpSource = readFileSync('bin/hermes-studio-mcp.mjs', 'utf8')
 
     expect(mcpSource).toContain("name: 'hermes_studio_lan_devices_list'")
     expect(mcpSource).toContain('online status')

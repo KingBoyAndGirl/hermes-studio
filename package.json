@@ -31,8 +31,8 @@
   ],
   "bin": {
     "hermes-web-ui": "./bin/hermes-web-ui.mjs",
-    "hermes-web-ui-mcp": "./bin/hermes-web-ui-mcp.mjs",
-    "hermes-studio-mcp": "./bin/hermes-web-ui-mcp.mjs"
+    "hermes-web-ui-mcp": "./bin/hermes-studio-mcp.mjs",
+    "hermes-studio-mcp": "./bin/hermes-studio-mcp.mjs"
   },
   "scripts": {
     "start": "vite --host --port 8648",

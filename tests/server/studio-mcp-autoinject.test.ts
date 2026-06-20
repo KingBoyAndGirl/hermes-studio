@@ -54,7 +54,7 @@ describe('studio MCP autoinject', () => {
     const injectedDefault = await updateConfigYamlForProfileMock.mock.calls[0][1]({})
     expect(injectedDefault.data.mcp_servers['hermes-studio-api']).toEqual({
       command: process.execPath,
-      args: [join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'api'],
+      args: [join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'api'],
       env: {
         HERMES_WEB_UI_URL: 'http://127.0.0.1:8648',
         HERMES_WEB_UI_HOME: '/Users/test/.hermes-web-ui',
@@ -68,7 +68,7 @@ describe('studio MCP autoinject', () => {
     })
     expect(injectedDefault.data.mcp_servers['hermes-studio-devices']).toMatchObject({
       command: process.execPath,
-      args: [join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'devices'],
+      args: [join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'devices'],
       env: {
         HERMES_MCP_SERVER_NAME: 'hermes-studio-devices',
         HERMES_MCP_TOOLSET: 'devices',
@@ -77,7 +77,7 @@ describe('studio MCP autoinject', () => {
     })
     expect(injectedDefault.data.mcp_servers['hermes-studio-use']).toMatchObject({
       command: process.execPath,
-      args: [join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'use'],
+      args: [join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'use'],
       env: {
         HERMES_MCP_SERVER_NAME: 'hermes-studio-use',
         HERMES_MCP_TOOLSET: 'use',
@@ -119,7 +119,7 @@ describe('studio MCP autoinject', () => {
       mcp_servers: {
         'hermes-studio-api': {
           command: process.execPath,
-          args: [join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'api'],
+          args: [join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'api'],
           env: {
             HERMES_WEB_UI_URL: 'http://127.0.0.1:8648',
             HERMES_WEB_UI_HOME: '/Users/test/.hermes-web-ui',
@@ -200,9 +200,9 @@ describe('studio MCP autoinject', () => {
     expect(updated.data.mcp_servers['hermes-studio']).toBeUndefined()
     expect(updated.data.mcp_servers['hermes-web-ui-mcp']).toBeUndefined()
     expect(updated.data.mcp_servers['hermes-studio-api'].command).toBe(process.execPath)
-    expect(updated.data.mcp_servers['hermes-studio-api'].args).toEqual([join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'api'])
-    expect(updated.data.mcp_servers['hermes-studio-devices'].args).toEqual([join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'devices'])
-    expect(updated.data.mcp_servers['hermes-studio-use'].args).toEqual([join(process.cwd(), 'bin/hermes-web-ui-mcp.mjs'), 'use'])
+    expect(updated.data.mcp_servers['hermes-studio-api'].args).toEqual([join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'api'])
+    expect(updated.data.mcp_servers['hermes-studio-devices'].args).toEqual([join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'devices'])
+    expect(updated.data.mcp_servers['hermes-studio-use'].args).toEqual([join(process.cwd(), 'bin/hermes-studio-mcp.mjs'), 'use'])
   })
 
   it('uses the desktop command in desktop runtime', async () => {
